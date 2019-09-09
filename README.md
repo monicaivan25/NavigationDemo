@@ -1,5 +1,5 @@
 # Navigation
-
+## Navigation components
 #### 1. Adding the Navigation Components to the Project
 Within the **Project** build.gradle:
 ```xml
