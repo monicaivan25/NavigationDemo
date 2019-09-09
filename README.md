@@ -1,106 +1,96 @@
 # Navigation
 
-This is the toy app for lesson 3 of the [Android App Development in Kotlin course on Udacity](https://www.udacity.com/course/developing-android-apps-with-kotlin--ud9012).
-
-## Android Trivia 
-
-The Android Trivia application is an application that asks the user trivia questions about Android development.  It makes use of the Navigation component within Jetpack to move the user between different screens.  Each screen is implemented as a Fragment.
-The app navigates using buttons, the Action Bar, and the Navigation Drawer.
-Since students haven't yet learned about saving data or the Android lifecycle, it tries to eliminate bugs caused by configuration changes. 
-
-## Screenshots
-
-![Screenshot1](screenshots/screen_1.png) ![Screenshot2](screenshots/screen_2.png)
-
-## How to use this repo while taking the course
-
-
-Each code repository in this class has a chain of commits that looks like this:
-
-![listofcommits](https://d17h27t6h515a5.cloudfront.net/topher/2017/March/58befe2e_listofcommits/listofcommits.png)
-
-These commits show every step you'll take to create the app. Each commit contains instructions for completing the that step.
-
-Each commit also has a **branch** associated with it of the same name as the commit message, seen below:
-
-![branches](https://d17h27t6h515a5.cloudfront.net/topher/2017/April/590390fe_branches-ud855/branches-ud855.png
-)
-Access all branches from this tab
-
-![listofbranches](https://d17h27t6h515a5.cloudfront.net/topher/2017/March/58befe76_listofbranches/listofbranches.png
-)
-
-
-![branchesdropdown](https://d17h27t6h515a5.cloudfront.net/topher/2017/April/590391a3_branches-dropdown-ud855/branches-dropdown-ud855.png
-)
-
-The branches are also accessible from the drop-down in the "Code" tab
-
-
-## Working with the Course Code
-
-Here are the basic steps for working with and completing exercises in the repo.
-
-The basic steps are:
-
-1. Clone the repo
-2. Checkout the branch corresponding to the step you want to attempt
-3. Find and complete the TODOs
-4. Optionally commit your code changes
-5. Compare your code with the solution
-6. Repeat steps 2-5 until you've gone trough all the steps to complete the toy app
-
-
-**Step 1: Clone the repo**
-
-As you go through the course, you'll be instructed to clone the different exercise repositories, so you don't need to set these up now. You can clone a repository from github in a folder of your choice with the command:
-
-```bash
-git clone https://github.com/udacity/REPOSITORY_NAME.git
+#### 1. Adding the Navigation Components to the Project
+Within the **Project** build.gradle:
+```xml
+buildscript {
+    ext {
+        ...
+        version_navigation = '1.0.0'
+        ...
+    }
 ```
-
-**Step 2: Checkout the step branch**
-
-As you go through different steps in the code, you'll be told which step you're on, as well as a link to the corresponding branch.
-
-You'll want to check out the branch associated with that step. The command to check out a branch would be:
-
-```bash
-git checkout BRANCH_NAME
+Within the **app** build.gradle:
+```xml
+dependencies {
+    ...
+    implementation "android.arch.navigation:navigation-fragment-ktx:$version_navigation"     
+    implementation "android.arch.navigation:navigation-ui-ktx:$version_navigation"
+}
 ```
+#### 2. Add the navigation graph to the project
+n the Project window, right-click on the res directory and select New > Android resource file. The New Resource dialog appears.
 
-**Step 3: Find and complete the TODOs**
+Select Navigation as the resource type, and give it the file name of navigation. Make sure it has no qualifiers. Select the navigation.xml file in the new navigation directory under res, and make sure the design tab is selected.
 
-Once you've checked out the branch, you'll have the code in the exact state you need. You'll even have TODOs, which are special comments that tell you all the steps you need to complete the exercise. You can easily navigate to all the TODOs using Android Studio's TODO tool. To open the TODO tool, click the button at the bottom of the screen that says TODO. This will display a list of all comments with TODO in the project. 
-
-We've numbered the TODO steps so you can do them in order:
-![todos](https://d17h27t6h515a5.cloudfront.net/topher/2017/March/58bf00e7_todos/todos.png
-)
-
-**Step 4: Commit your code changes**
-
-After You've completed the TODOs, you can optionally commit your changes. This will allow you to see the code you wrote whenever you return to the branch. The following git code will add and save **all** your changes.
-
-```bash
-git add .
-git commit -m "Your commit message"
+#### 3.Add the NavHostFragment to your activity's xml file:
+```xml
+<!-- The NavHostFragment within the activity_main layout -->
+<fragment
+   android:id="@+id/myNavHostFragment"
+   android:name="androidx.navigation.fragment.NavHostFragment"
+   android:layout_width="match_parent"
+   android:layout_height="match_parent"
+   app:navGraph="@navigation/navigation"
+   app:defaultNavHost="true"
+   />
 ```
+#### 4. Adding the Title and Game Fragments to the Navigation Graph
+Within the navigation editor, click the add button. A list of fragments and activities will drop down. Add fragment_title first, as it is the start destination. (you’ll see that it will automatically be set as the Start Destination for the graph.) 
+![github-large](https://i.imgur.com/FrNIdvA.png)
+Next, add the fragment_game.
+```xml
+<!-- The complete game fragment within the navigation XML, complete with tools:layout. -->
+<fragment
+   android:id="@+id/gameFragment"
+   android:name="com.example.android.navigation.GameFragment"
+   android:label="GameFragment"
+   tools:layout="@layout/fragment_game" />
+```
+#### 5. Connecting the Title and Game Fragments with an Action
+Begin by hovering over the titleFragment. You’ll see a circular connection point on the right side of the fragment view. Click on the connection point and drag it to gameFragment to add an Action that connects the two fragments.
 
-**Step 5: Compare with the solution**
+#### 6. Navigating when the Play Button is Hit
+Return to onCreateView in the TitleFragment Kotlin code. The binding class has been exposed, so you just call binding.playButton.setOnClickListener. Inside our lambda, use view.findNavcontroller to get the navigation controller for our Navigation Host Fragment. Then, use the navController to navigate using the titleFragment to gameFragment action, by calling navigate(R.id.action_titleFragment_to_gameFragment)
+```kotlin
+//The complete onClickListener with Navigation
+binding.playButton.setOnClickListener { view: View ->
+        view.findNavController().navigate(R.id.action_titleFragment_to_gameFragment)
+}
+```
+Navigation can create the onClick listener for us. We can replace the anonymous function with the Navigation.createNavigateOnClickListener call.
+```kotlin
+//The complete onClickListener with Navigation using createNavigateOnClickListener
+binding.playButton.setOnClickListener(
+        Navigation.createNavigateOnClickListener(R.id.action_titleFragment_to_gameFragment))
+```
+----------------------------------------------
+## Back Stack Manipulation
+#### 1. For the actions connecting the gameFragment to the gameOverFragment and gameFragment to the gameWonFragment, set the pop behavior to popTo gameFragment inclusive OR popTo titleFragment without the inclusive flag.
 
-Most exercises will have a list of steps for you to check off in the classroom. Once you've checked these off, you'll see a pop up window with a link to the solution code. Note the **Diff** link:
+Go to the navigation editor and select the action for navigating from the GameFragment to the GameOverFragment. 
+![github-large](https://i.imgur.com/0AzDnfp.png)
+Select PopTo GameFragment in the attributes pane with the inclusive flag OR PopTo TitleFragment without the inclusive flag.
 
-![solutionwindow](https://d17h27t6h515a5.cloudfront.net/topher/2017/March/58bf00f9_solutionwindow/solutionwindow.png
-)
+#### 2. Add an onClick Handler for the tryAgain button that navigates to the gameFragment and the nextMatch button that navigates to the gameWonFragment
 
-The **Diff** link will take you to a Github diff as seen below:
-![diff](https://d17h27t6h515a5.cloudfront.net/topher/2017/March/58bf0108_diffsceenshot/diffsceenshot.png
-)
+----------------------------------------------
+## Add support for the Up Button
+#### 1. Link the NavController to the ActionBar with NavigationUI.setupWithNavController.
+Let's move to MainActivity. We need to find the NavController. Since we’re in the Activity now, we’ll use the alternate method of finding the controller from the ID of our NavHostFragment using the KTX extension function.
+```kotlin
+val navController = this.findNavController(R.id.myNavHostFragment)
+```
+Link the NavController to our ActionBar.
+```kotlin
+NavigationUI.setupActionBarWithNavController(this, navController)
+```
+#### 2. Override the onSupportNavigateUp method from the activity and call navigateUp in nav controller.
 
-All of the code that was added in the solution is in green, and the removed code (which will usually be the TODO comments) is in red. 
-
-You can also compare your code locally with the branch of the following step.
-
-## Report Issues
-Notice any issues with a repository? Please file a github issue in the repository.
-
+Finally, we need to have the Activity handle the navigateUp action from our Activity. To do this we override onSupportNavigateUp, find the nav controller, and then we call navigateUp().
+```kotlin
+override fun onSupportNavigateUp(): Boolean {
+   val navController = this.findNavController(R.id.myNavHostFragment)
+   return navController.navigateUp()
+}
+```
