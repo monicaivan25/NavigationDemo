@@ -101,11 +101,11 @@ Click the "add" button. A list of fragments and activities will drop down. Add f
 
 #### 2. Create new menu resource.
 Right click on the res folder within the Android project and select New Resource File. We’ll call this one overflow_menu, with resource type of Menu. 
-![github-large] (https://video.udacity-data.com/topher/2018/October/5bc5208f_screen-shot-2018-10-16-at-10.19.28-am/screen-shot-2018-10-16-at-10.19.28-am.png)
+![github-large](https://video.udacity-data.com/topher/2018/October/5bc5208f_screen-shot-2018-10-16-at-10.19.28-am/screen-shot-2018-10-16-at-10.19.28-am.png)
 
 #### 3. Create “About” menu item with ID of aboutFragment destination
 Make sure the design tab is selected. Drag a menu item from the palette into the component tree below. Move to the attributes pane. Set the new item's id to aboutFragment, its destination. That's the id you used when adding the About fragment to the navigation graph. For title, we can use @string/about. The rest of the attributes should be left as their defaults.
-![github-large](https://video.udacity-data.com/topher/2018/October/5bc520b8_screen-shot-2018-10-16-at-10.20.13-am/screen-shot-2018-10-16-at-10.20.13-am.png)
+![github-small](https://video.udacity-data.com/topher/2018/October/5bc520b8_screen-shot-2018-10-16-at-10.20.13-am/screen-shot-2018-10-16-at-10.20.13-am.png)
 
 #### 4. Call setHasOptionsMenu() in onCreateView of TitleFragment
 
